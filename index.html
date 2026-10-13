@@ -6,297 +6,455 @@
   <title>پورتال استعلام وضعیت مالی نمایندگان</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0b1120;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --accent-hover: #0284c7;
-      --text: #f8fafc;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --danger: #f87171;
-      --border: #334155;
+      --input-bg: rgba(15, 23, 42, 0.8);
+      --error-bg: rgba(239, 68, 68, 0.15);
+      --error-border: #ef4444;
+      --error-text: #fca5a5;
     }
+
     * {
       box-sizing: border-box;
-      font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
     }
+
     body {
       background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+      color: var(--text-main);
       min-height: 100vh;
-      margin: 0;
-      padding: 16px;
-    }
-    .container {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px 24px;
-      max-width: 440px;
-      width: 100%;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-    }
-    .logo-badge {
-      width: 48px;
-      height: 48px;
-      background: rgba(56, 189, 248, 0.1);
-      color: var(--accent);
-      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
+      padding: 1.5rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      color: var(--accent-cyan);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    .brand-header h1 {
       font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
     }
-    h2 {
-      margin: 0 0 6px 0;
-      text-align: center;
-      color: #fff;
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-    p.desc {
-      text-align: center;
-      color: var(--text-muted);
+
+    .brand-header p {
       font-size: 0.85rem;
-      margin: 0 0 24px 0;
-      line-height: 1.5;
+      color: var(--text-muted);
     }
+
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 1.25rem;
     }
-    label {
+
+    .form-group label {
       display: block;
-      margin-bottom: 6px;
       font-size: 0.85rem;
+      font-weight: 600;
       color: var(--text-muted);
+      margin-bottom: 0.5rem;
     }
+
+    .input-wrapper {
+      position: relative;
+    }
+
     input {
       width: 100%;
-      padding: 12px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #0f172a;
-      color: #fff;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
       font-size: 1rem;
+      color: var(--text-main);
       outline: none;
+      transition: all 0.2s ease;
       direction: ltr;
-      text-align: center;
-      transition: border-color 0.2s;
+      text-align: right;
     }
+
     input:focus {
-      border-color: var(--accent);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
     }
-    button {
+
+    button.btn-submit {
       width: 100%;
-      padding: 12px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #fff;
       border: none;
-      border-radius: 8px;
-      background: var(--accent);
-      color: #0b1120;
+      border-radius: 14px;
+      padding: 0.95rem;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
-      transition: background-color 0.2s, opacity 0.2s;
+      box-shadow: 0 10px 20px -5px rgba(6, 182, 212, 0.4);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
     }
-    button:hover {
-      background-color: var(--accent-hover);
+
+    button.btn-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px -5px rgba(6, 182, 212, 0.5);
     }
-    button:disabled {
+
+    button.btn-submit:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
-    .error-msg {
-      color: var(--danger);
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      border-radius: 8px;
-      padding: 10px;
+
+    .alert {
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
       font-size: 0.85rem;
-      text-align: center;
-      margin-top: 16px;
+      margin-top: 1.25rem;
       display: none;
+      line-height: 1.5;
     }
-    .result-box {
+
+    .alert-error {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+    }
+
+    /* نتایج استعلام */
+    .result-section {
       display: none;
-      margin-top: 24px;
-      border-top: 1px dashed var(--border);
-      padding-top: 20px;
-      animation: fadeIn 0.3s ease;
+      margin-top: 1.5rem;
+      animation: fadeIn 0.4s ease;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
     }
+
     .metric-card {
-      background: #0f172a;
-      padding: 12px 6px;
-      border-radius: 8px;
-      text-align: center;
-      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
+
     .metric-title {
-      font-size: 0.72rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      margin-bottom: 4px;
     }
-    .metric-value {
-      font-size: 1.05rem;
+
+    .metric-val {
+      font-size: 1.15rem;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--accent-cyan);
       direction: ltr;
     }
-    .message-card {
-      background: #0f172a;
-      padding: 14px;
-      border-radius: 8px;
-      border-right: 3px solid var(--accent);
-      font-size: 0.88rem;
-      line-height: 1.7;
+
+    .message-box {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 14px;
+      padding: 1.1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .message-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .message-content {
+      font-size: 0.9rem;
+      line-height: 1.6;
       color: #e2e8f0;
+      white-space: pre-wrap;
+    }
+
+    .btn-reset {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 12px;
+      padding: 0.75rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-reset:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="logo-badge">📊</div>
-    <h2>پورتال نمایندگان</h2>
-    <p class="desc">جهت مشاهده اطلاعات مالی، کد ملی و شماره همراه خود را وارد کنید.</p>
-
-    <div class="form-group">
-      <label>کد ملی</label>
-      <input type="text" id="nid" placeholder="10 رقم" maxlength="10">
+    <div class="brand-header">
+      <div class="badge">KARO BI PORTAL</div>
+      <h1>استعلام وضعیت نمایندگان</h1>
+      <p>جهت مشاهده وضعیت مالی، مشخصات را وارد نمایید</p>
     </div>
 
-    <div class="form-group">
-      <label>شماره همراه</label>
-      <input type="text" id="phone" placeholder="09xxxxxxxxx" maxlength="11">
-    </div>
+    <!-- فرم ورودی -->
+    <form id="queryForm">
+      <div class="form-group">
+        <label for="nid">کد ملی</label>
+        <input type="tel" id="nid" placeholder="مثال: 0012345678" maxlength="10" required autocomplete="off">
+      </div>
 
-    <button id="submitBtn" onclick="handleLookup()">مشاهده اطلاعات</button>
-    <div id="error" class="error-msg"></div>
+      <div class="form-group">
+        <label for="phone">شماره همراه</label>
+        <input type="tel" id="phone" placeholder="مثال: 09121234567" maxlength="11" required autocomplete="off">
+      </div>
 
-    <div id="result" class="result-box">
+      <button type="submit" id="submitBtn" class="btn-submit">
+        <span id="btnText">مشاهده اطلاعات</span>
+      </button>
+
+      <div id="alertBox" class="alert alert-error"></div>
+    </form>
+
+    <!-- بخش نمایش نتیجه -->
+    <div id="resultBox" class="result-section">
       <div class="metrics-grid">
         <div class="metric-card">
-          <div class="metric-title">شاخص اول</div>
-          <div class="metric-value" id="m1">-</div>
+          <span class="metric-title">شاخص اول (Metric 1)</span>
+          <span class="metric-val" id="resM1">-</span>
         </div>
         <div class="metric-card">
-          <div class="metric-title">شاخص دوم</div>
-          <div class="metric-value" id="m2">-</div>
+          <span class="metric-title">شاخص دوم (Metric 2)</span>
+          <span class="metric-val" id="resM2">-</span>
         </div>
         <div class="metric-card">
-          <div class="metric-title">شاخص سوم</div>
-          <div class="metric-value" id="m3">-</div>
+          <span class="metric-title">شاخص سوم (Metric 3)</span>
+          <span class="metric-val" id="resM3">-</span>
         </div>
       </div>
-      <div class="message-card" id="msgText"></div>
+
+      <div class="message-box">
+        <div class="message-title">پیام اختصاصی شما</div>
+        <div class="message-content" id="resMsg">-</div>
+      </div>
+
+      <button type="button" id="resetBtn" class="btn-reset">استعلام جدید</button>
     </div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKENqr8463hw38jX0X/exec";
+    // آدرس وب‌اپ گوگل اسکریپت
+    const SCRIPT_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKENpubsoxpw8cX0X/exec";
+
+    const form = document.getElementById('queryForm');
+    const nidInput = document.getElementById('nid');
+    const phoneInput = document.getElementById('phone');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const alertBox = document.getElementById('alertBox');
+    const resultBox = document.getElementById('resultBox');
+    const resetBtn = document.getElementById('resetBtn');
 
     // تبدیل ارقام فارسی و عربی به انگلیسی
-    function toEnglishDigits(str) {
+    function normalizeDigits(str) {
       if (!str) return "";
-      return str
-        .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
-        .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+      const p = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+      const a = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+      let res = str.toString().trim();
+      for (let i = 0; i < 10; i++) {
+        res = res.replaceAll(p[i], i).replaceAll(a[i], i);
+      }
+      return res;
     }
 
-    // فرمت سه‌رقم‌سه‌رقم فارسی
-    function formatValue(val) {
-      if (val === null || val === undefined || val === '') return '-';
-      const cleanStr = val.toString().replace(/,/g, '').trim();
-      return !isNaN(cleanStr) && cleanStr !== ''
-        ? Number(cleanStr).toLocaleString('fa-IR')
-        : val;
+    // فرمت کردن ارقام با کاما (fa-IR)
+    function formatNumber(val) {
+      if (val === null || val === undefined || val === "") return "-";
+      const num = Number(val);
+      if (!isNaN(num) && typeof val !== "boolean") {
+        return num.toLocaleString('fa-IR');
+      }
+      return val;
     }
 
-    function handleLookup() {
-      const nidInput = document.getElementById('nid');
-      const phoneInput = document.getElementById('phone');
-      const btn = document.getElementById('submitBtn');
-      const errBox = document.getElementById('error');
-      const resBox = document.getElementById('result');
+    function showAlert(msg) {
+      alertBox.textContent = msg;
+      alertBox.style.display = 'block';
+    }
 
-      const nid = toEnglishDigits(nidInput.value.trim());
-      const phone = toEnglishDigits(phoneInput.value.trim());
+    function hideAlert() {
+      alertBox.style.display = 'none';
+      alertBox.textContent = '';
+    }
 
-      errBox.style.display = 'none';
-      resBox.style.display = 'none';
+    function setLoading(isLoading) {
+      if (isLoading) {
+        submitBtn.disabled = true;
+        btnText.innerHTML = '<span class="spinner"></span> در حال بررسی...';
+      } else {
+        submitBtn.disabled = false;
+        btnText.textContent = 'مشاهده اطلاعات';
+      }
+    }
 
-      if (!nid || !phone) {
-        errBox.textContent = 'لطفاً هر دو فیلد کد ملی و شماره همراه را وارد نمایید.';
-        errBox.style.display = 'block';
+    // هسته اصلی اتصال: تکنیک JSONP برای عبور تضمینی از CORS و Redirect
+    function fetchJSONP(url, timeoutMs = 15000) {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random()) + '_' + Date.now();
+        const script = document.createElement('script');
+        let timer = null;
+
+        const cleanUp = () => {
+          if (timer) clearTimeout(timer);
+          if (script.parentNode) script.parentNode.removeChild(script);
+          delete window[callbackName];
+        };
+
+        window[callbackName] = (data) => {
+          cleanUp();
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          cleanUp();
+          reject(new Error("امکان برقراری ارتباط با وب‌سرویس گوگل وجود ندارد."));
+        };
+
+        timer = setTimeout(() => {
+          cleanUp();
+          reject(new Error("مهلت زمان پاسخ‌گویی به پایان رسید. لطفاً مجدد تلاش کنید."));
+        }, timeoutMs);
+
+        const sep = url.includes('?') ? '&' : '?';
+        script.src = `${url}${sep}callback=${callbackName}`;
+        document.body.appendChild(script);
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const nid = normalizeDigits(nidInput.value);
+      const phone = normalizeDigits(phoneInput.value);
+
+      if (nid.length !== 10) {
+        showAlert("کد ملی باید دقیقاً ۱۰ رقم باشد.");
         return;
       }
 
-      btn.textContent = 'در حال استعلام...';
-      btn.disabled = true;
-
-      // ارتباط بدون ارور CORS با پروتکل JSONP
-      const callbackName = 'gasCb_' + Math.floor(Math.random() * 1000000);
-      const script = document.createElement('script');
-
-      // تایم‌اوت محافظتی برای ارتباط
-      const timeoutId = setTimeout(() => {
-        cleanup();
-        errBox.textContent = 'پاسخی از سرور دریافت نشد. لطفاً مجدداً امتحان کنید.';
-        errBox.style.display = 'block';
-        btn.textContent = 'مشاهده اطلاعات';
-        btn.disabled = false;
-      }, 10000);
-
-      function cleanup() {
-        if (script.parentNode) script.parentNode.removeChild(script);
-        delete window[callbackName];
-        clearTimeout(timeoutId);
+      if (phone.length !== 11 || !phone.startsWith("09")) {
+        showAlert("شماره همراه باید ۱۱ رقم بوده و با 09 شروع شود.");
+        return;
       }
 
-      window[callbackName] = function(res) {
-        cleanup();
-        btn.textContent = 'مشاهده اطلاعات';
-        btn.disabled = false;
+      setLoading(true);
+
+      const requestUrl = `${SCRIPT_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}`;
+
+      try {
+        const res = await fetchJSONP(requestUrl);
 
         if (res.status === 'success' && res.data) {
-          document.getElementById('m1').textContent = formatValue(res.data.m1);
-          document.getElementById('m2').textContent = formatValue(res.data.m2);
-          document.getElementById('m3').textContent = formatValue(res.data.m3);
-          document.getElementById('msgText').textContent = res.data.msg || 'پیامی ثبت نشده است.';
-          resBox.style.display = 'block';
+          document.getElementById('resM1').textContent = formatNumber(res.data.m1);
+          document.getElementById('resM2').textContent = formatNumber(res.data.m2);
+          document.getElementById('resM3').textContent = formatNumber(res.data.m3);
+          document.getElementById('resMsg').textContent = res.data.msg || "پیامی ثبت نشده است.";
+
+          form.style.display = 'none';
+          resultBox.style.display = 'block';
+        } else if (res.status === 'not_found') {
+          showAlert(res.message || "اطلاعاتی با این مشخصات یافت نشد.");
         } else {
-          errBox.textContent = res.message || 'اطلاعاتی با این کد ملی و شماره همراه یافت نشد.';
-          errBox.style.display = 'block';
+          showAlert(res.message || "خطا در دریافت اطلاعات.");
         }
-      };
+      } catch (err) {
+        showAlert(err.message || "خطا در ارتباط با سرور.");
+      } finally {
+        setLoading(false);
+      }
+    });
 
-      script.onerror = function() {
-        cleanup();
-        btn.textContent = 'مشاهده اطلاعات';
-        btn.disabled = false;
-        errBox.textContent = 'خطا در ارتباط با سرور. لطفاً اتصال اینترنت را بررسی کنید.';
-        errBox.style.display = 'block';
-      };
-
-      script.src = `${API_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}&callback=${callbackName}`;
-      document.body.appendChild(script);
-    }
+    resetBtn.addEventListener('click', () => {
+      resultBox.style.display = 'none';
+      form.style.display = 'block';
+      nidInput.value = '';
+      phoneInput.value = '';
+      hideAlert();
+      nidInput.focus();
+    });
   </script>
 </body>
 </html>
