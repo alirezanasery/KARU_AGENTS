@@ -208,10 +208,10 @@
     </div>
   </div>
   <script>
-    // آدرس وب‌اپلیکیشن اختصاصی گوگل‌اسکریپت شما
-    const API_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKEN2tescd0ynhhX0X/exec";
+    // آدرس وب‌اپلیکیشن اختصاصی گوگل‌اسکریپت
+    const API_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKENyzx7g1bt9dfX0X/exec";
 
-    // تبدیل اعداد فارسی/عربی به انگلیسی برای جلوگیری از خطای ورودی کاربر روی کیبورد موبایل
+    // تبدیل خودکار اعداد فارسی و عربی به انگلیسی
     function toEnglishDigits(str) {
       if (!str) return "";
       return str
@@ -247,19 +247,21 @@
         return;
       }
 
-      // وضعیت در حال لودینگ
+      // وضعیت در حال استعلام
       btn.textContent = 'در حال استعلام...';
       btn.disabled = true;
 
       try {
         const endpoint = `${API_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}`;
+        
+        // درخواست مستقیم همراه با فالو کردن ریدایرکت گوگل
         const response = await fetch(endpoint, {
           method: "GET",
-          headers: { "Accept": "application/json" }
+          redirect: "follow"
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('خطا در پاسخ سرور: ' + response.status);
         }
 
         const res = await response.json();
@@ -276,8 +278,8 @@
           errBox.style.display = 'block';
         }
       } catch (err) {
-        console.error(err);
-        errBox.textContent = 'خطا در برقراری ارتباط با سامانه. لطفاً اتصال اینترنت خود را بررسی کنید.';
+        console.error("Fetch Error:", err);
+        errBox.textContent = 'خطا در برقراری ارتباط با سرور. لطفاً مجدداً تلاش کنید.';
         errBox.style.display = 'block';
       } finally {
         btn.textContent = 'مشاهده اطلاعات';
