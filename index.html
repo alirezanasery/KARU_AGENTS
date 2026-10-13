@@ -207,11 +207,11 @@
       <div class="message-card" id="msgText"></div>
     </div>
   </div>
-  <script>
-    // آدرس وب‌اپلیکیشن اختصاصی گوگل‌اسکریپت
-    const API_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKENyzx7g1bt9dfX0X/exec";
 
-    // تبدیل خودکار اعداد فارسی و عربی به انگلیسی
+  <script>
+    const API_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKENqr8463hw38jX0X/exec";
+
+    // تبدیل ارقام فارسی و عربی به انگلیسی
     function toEnglishDigits(str) {
       if (!str) return "";
       return str
@@ -228,7 +228,7 @@
         : val;
     }
 
-    async function handleLookup() {
+    function handleLookup() {
       const nidInput = document.getElementById('nid');
       const phoneInput = document.getElementById('phone');
       const btn = document.getElementById('submitBtn');
@@ -247,44 +247,55 @@
         return;
       }
 
-      // وضعیت در حال استعلام
       btn.textContent = 'در حال استعلام...';
       btn.disabled = true;
 
-      try {
-        const endpoint = `${API_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}`;
-        
-        // درخواست مستقیم همراه با فالو کردن ریدایرکت گوگل
-        const response = await fetch(endpoint, {
-          method: "GET",
-          redirect: "follow"
-        });
+      // ارتباط بدون ارور CORS با پروتکل JSONP
+      const callbackName = 'gasCb_' + Math.floor(Math.random() * 1000000);
+      const script = document.createElement('script');
 
-        if (!response.ok) {
-          throw new Error('خطا در پاسخ سرور: ' + response.status);
-        }
+      // تایم‌اوت محافظتی برای ارتباط
+      const timeoutId = setTimeout(() => {
+        cleanup();
+        errBox.textContent = 'پاسخی از سرور دریافت نشد. لطفاً مجدداً امتحان کنید.';
+        errBox.style.display = 'block';
+        btn.textContent = 'مشاهده اطلاعات';
+        btn.disabled = false;
+      }, 10000);
 
-        const res = await response.json();
+      function cleanup() {
+        if (script.parentNode) script.parentNode.removeChild(script);
+        delete window[callbackName];
+        clearTimeout(timeoutId);
+      }
+
+      window[callbackName] = function(res) {
+        cleanup();
+        btn.textContent = 'مشاهده اطلاعات';
+        btn.disabled = false;
 
         if (res.status === 'success' && res.data) {
           document.getElementById('m1').textContent = formatValue(res.data.m1);
           document.getElementById('m2').textContent = formatValue(res.data.m2);
           document.getElementById('m3').textContent = formatValue(res.data.m3);
           document.getElementById('msgText').textContent = res.data.msg || 'پیامی ثبت نشده است.';
-          
           resBox.style.display = 'block';
         } else {
           errBox.textContent = res.message || 'اطلاعاتی با این کد ملی و شماره همراه یافت نشد.';
           errBox.style.display = 'block';
         }
-      } catch (err) {
-        console.error("Fetch Error:", err);
-        errBox.textContent = 'خطا در برقراری ارتباط با سرور. لطفاً مجدداً تلاش کنید.';
-        errBox.style.display = 'block';
-      } finally {
+      };
+
+      script.onerror = function() {
+        cleanup();
         btn.textContent = 'مشاهده اطلاعات';
         btn.disabled = false;
-      }
+        errBox.textContent = 'خطا در ارتباط با سرور. لطفاً اتصال اینترنت را بررسی کنید.';
+        errBox.style.display = 'block';
+      };
+
+      script.src = `${API_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}&callback=${callbackName}`;
+      document.body.appendChild(script);
     }
   </script>
 </body>
