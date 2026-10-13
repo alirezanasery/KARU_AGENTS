@@ -1,467 +1,514 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پورتال استعلام وضعیت مالی نمایندگان</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>پرتال نمایندگان | KARU</title>
+
   <style>
-    :root {
-      --bg: #0b1120;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --accent-hover: #0284c7;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --error: #f87171;
-      --success: #34d399;
+    :root{
+      --bg:#0b1020;
+      --card:#0f1733;
+      --card2:#121c3d;
+      --text:#eaf0ff;
+      --muted:#9fb0de;
+      --brand:#6aa6ff;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --err:#ef4444;
+      --border: rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 70% -10%, rgba(106,166,255,.25), transparent 55%),
+                  radial-gradient(900px 500px at 15% 10%, rgba(34,197,94,.12), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
     }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
+    .wrap{width:min(920px,100%)}
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
     }
-
-    .container {
-      width: 100%;
-      max-width: 520px;
+    .title{
+      display:flex; flex-direction:column; gap:4px;
     }
-
-    .card {
-      background-color: var(--card-bg);
+    h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border: 1px solid var(--border);
-      border-radius: 1.25rem;
-      padding: 2.25rem 2rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+    }
+    .pane{
+      padding:18px;
+    }
+    .pane.left{
+      background: rgba(255,255,255,.02);
+      border-left:1px solid var(--border);
+    }
+    @media (max-width: 860px){
+      .pane.left{border-left:0;border-top:1px solid var(--border)}
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
+    .form{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:10px;
     }
-
-    .header h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 0.5rem;
+    @media (max-width: 520px){
+      .form{grid-template-columns:1fr}
     }
-
-    .header p {
-      font-size: 0.875rem;
-      color: var(--text-muted);
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
     }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--text-main);
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.85rem 1rem;
-      border-radius: 0.75rem;
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
       border: 1px solid var(--border);
-      background-color: #0f172a;
-      color: var(--text-main);
-      font-size: 1rem;
-      transition: all 0.2s ease;
-      direction: ltr;
-      text-align: right;
+      background: rgba(0,0,0,.22);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    input:focus{
+      border-color: rgba(106,166,255,.55);
+      box-shadow: 0 0 0 4px rgba(106,166,255,.14);
     }
 
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      align-items:center;
+      flex-wrap:wrap;
     }
-
-    .form-group input::placeholder {
-      color: #475569;
+    button{
+      border:0;
+      border-radius:14px;
+      padding:11px 14px;
+      font-size:14px;
+      cursor:pointer;
+      color: #071022;
+      background: linear-gradient(180deg, #7fb7ff, #4c8dff);
+      box-shadow: 0 10px 22px rgba(76,141,255,.25);
+      transition: transform .06s ease, filter .2s ease;
     }
-
-    button.btn-submit {
-      width: 100%;
-      padding: 0.9rem;
-      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-      color: #0b1120;
-      border: none;
-      border-radius: 0.75rem;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    button.btn-submit:hover:not(:disabled) {
-      filter: brightness(1.1);
-      transform: translateY(-1px);
-    }
-
-    button.btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(11, 17, 32, 0.3);
-      border-top-color: #0b1120;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      display: none;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .alert {
-      padding: 1rem;
-      border-radius: 0.75rem;
-      margin-top: 1.5rem;
-      font-size: 0.9rem;
-      line-height: 1.5;
-      display: none;
-    }
-
-    .alert-error {
-      background-color: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.3);
-      color: var(--error);
-    }
-
-    .result-section {
-      display: none;
-      margin-top: 2rem;
-      border-top: 1px solid var(--border);
-      padding-top: 1.75rem;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .agent-name {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 1.25rem;
-      text-align: center;
-    }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .metric-card {
-      background-color: #0f172a;
+    button:active{transform: translateY(1px)}
+    button.secondary{
+      background: rgba(255,255,255,.08);
+      color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 1rem 0.5rem;
-      text-align: center;
+      box-shadow:none;
+    }
+    button[disabled]{opacity:.6; cursor:not-allowed; filter: grayscale(.2)}
+    .hint{
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.7;
+      margin-top:10px;
     }
 
-    .metric-title {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
+    .status{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      display:none;
+      font-size:13px;
+      line-height:1.7;
+    }
+    .status.show{display:block}
+    .status.ok{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.10)}
+    .status.err{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.10)}
+    .status.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10)}
+
+    .metrics{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:6px;
+    }
+    .metric{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      background: rgba(0,0,0,.18);
+    }
+    .metric .k{
+      color: var(--muted);
+      font-size:12px;
+      margin-bottom:6px;
+    }
+    .metric .v{
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:.2px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
     }
 
-    .metric-value {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
-      direction: ltr;
+    .msg{
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      background: rgba(0,0,0,.18);
+    }
+    .msg .k{color:var(--muted); font-size:12px; margin-bottom:6px;}
+    .msg .v{font-size:14px; line-height:1.9; white-space:pre-wrap;}
+    footer{
+      margin-top:14px;
+      color: rgba(159,176,222,.75);
+      font-size:12px;
+      line-height:1.8;
+      text-align:center;
     }
 
-    .message-card {
-      background-color: #0f172a;
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 1rem 1.25rem;
+    .spinner{
+      width:14px; height:14px; border-radius:50%;
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color: rgba(255,255,255,.9);
+      display:inline-block;
+      animation: spin .8s linear infinite;
+      vertical-align: -2px;
+      margin-left:8px;
     }
-
-    .message-card h4 {
-      font-size: 0.85rem;
-      color: var(--accent);
-      margin-bottom: 0.4rem;
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-
-    .message-card p {
-      font-size: 0.9rem;
-      line-height: 1.6;
-      color: #cbd5e1;
-      white-space: pre-wrap;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 1.5rem;
-      font-size: 0.75rem;
-      color: #64748b;
+    .badge{
+      font-size:12px; color: rgba(234,240,255,.92);
+      border:1px solid var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.05);
     }
   </style>
 </head>
+
 <body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>پرتال نمایندگان KARU</h1>
+        <p class="sub">برای مشاهده وضعیت مالی و پیام اختصاصی، کدملی و شماره موبایل خود را وارد کنید.</p>
+      </div>
+      <div class="badge">نسخه امن (JSONP) • بدون دانلود کل دیتابیس</div>
+    </header>
 
-  <div class="container">
     <div class="card">
-      <div class="header">
-        <h1>پورتال اطلاع‌رسانی نمایندگان</h1>
-        <p>جهت استعلام وضعیت، اطلاعات زیر را وارد نمایید</p>
-      </div>
-
-      <form id="queryForm">
-        <div class="form-group">
-          <label for="nid">کد ملی</label>
-          <input type="text" id="nid" placeholder="مثال: 1050781538" required autocomplete="off">
-        </div>
-
-        <div class="form-group">
-          <label for="phone">شماره موبایل</label>
-          <input type="tel" id="phone" placeholder="مثال: 09378852305" required autocomplete="off">
-        </div>
-
-        <button type="submit" class="btn-submit" id="submitBtn">
-          <span class="spinner" id="spinner"></span>
-          <span id="btnText">استعلام وضعیت</span>
-        </button>
-      </form>
-
-      <div class="alert alert-error" id="errorBox"></div>
-
-      <div class="result-section" id="resultBox">
-        <div class="agent-name" id="agentName"></div>
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-title">شاخص اول</div>
-            <div class="metric-value" id="m1">-</div>
+      <div class="grid">
+        <!-- Right: Form -->
+        <div class="pane">
+          <div class="row">
+            <strong>ورود اطلاعات</strong>
+            <span class="sub">فقط اطلاعات خودتان نمایش داده می‌شود.</span>
           </div>
-          <div class="metric-card">
-            <div class="metric-title">شاخص دوم</div>
-            <div class="metric-value" id="m2">-</div>
+
+          <div class="form">
+            <div>
+              <label for="nidInput">کدملی</label>
+              <input id="nidInput" inputmode="numeric" autocomplete="off" placeholder="مثلاً ۱۰۵۰۷۸۱۵۳۸" />
+            </div>
+            <div>
+              <label for="phoneInput">شماره موبایل</label>
+              <input id="phoneInput" inputmode="tel" autocomplete="off" placeholder="مثلاً ۰۹۳۷۸۸۵۲۳۰۵" />
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-title">شاخص سوم</div>
-            <div class="metric-value" id="m3">-</div>
+
+          <div class="actions">
+            <button id="btnSearch" onclick="handleSearch()">استعلام</button>
+            <button class="secondary" onclick="fillTest()">تست سریع</button>
+            <button class="secondary" onclick="resetAll()">پاک کردن</button>
+            <span id="loading" class="sub" style="display:none;"><span class="spinner"></span>در حال دریافت اطلاعات…</span>
+          </div>
+
+          <div id="status" class="status"></div>
+
+          <div class="hint">
+            نکته: ارقام فارسی/عربی به‌صورت خودکار تبدیل می‌شوند. شماره موبایل با یا بدون ۰ اول قابل قبول است.
           </div>
         </div>
 
-        <div class="message-card" id="msgContainer" style="display: none;">
-          <h4>پیام اختصاصی</h4>
-          <p id="agentMessage"></p>
+        <!-- Left: Results -->
+        <div class="pane left">
+          <div class="row">
+            <strong>نتیجه</strong>
+            <span id="who" class="sub">—</span>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="k" id="k1">متریک ۱</div>
+              <div class="v" id="m1">—</div>
+            </div>
+            <div class="metric">
+              <div class="k" id="k2">متریک ۲</div>
+              <div class="v" id="m2">—</div>
+            </div>
+            <div class="metric">
+              <div class="k" id="k3">متریک ۳</div>
+              <div class="v" id="m3">—</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="k">پیام</div>
+            <div class="v" id="msg">—</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="footer">
-      سامانه یکپارچه گزارشات و عملکرد نمایندگان
-    </div>
+    <footer>
+      اگر شبکه‌ی شما دسترسی به <code>script.google.com</code> را محدود کند، استعلام ممکن است انجام نشود.
+      در این حالت باید یا شبکه تغییر کند یا راهکار سرور جایگزین استفاده شود.
+    </footer>
   </div>
 
   <script>
-    // آدرس خواندن مستقیم شیت شما بدون واسطه اسکریپت
-    const SHEET_ID = "13bPVuxgdyrtSOf6lvmf8bQAEFkL8UXfbUxHlBB4G6V0";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=db`;
+    /***********************
+     * تنظیمات اصلی
+     ***********************/
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoXFekrLrj_GdBZWh6iWqrCPt1JUXRSl5USvzYKOaW5rMgjE3y2Ww3nbXu4moQBjiy/exec";
+    const REQUEST_TIMEOUT_MS = 12000;
 
-    const form = document.getElementById("queryForm");
-    const nidInput = document.getElementById("nid");
-    const phoneInput = document.getElementById("phone");
-    const submitBtn = document.getElementById("submitBtn");
-    const spinner = document.getElementById("spinner");
-    const btnText = document.getElementById("btnText");
-    const errorBox = document.getElementById("errorBox");
-    const resultBox = document.getElementById("resultBox");
+    /***********************
+     * Utils: تبدیل ارقام + فرمت عدد
+     ***********************/
+    function toEnglishDigits(input) {
+      if (input === null || input === undefined) return "";
+      let s = String(input);
 
-    // پاکسازی اعداد فارسی/عربی و حذف کاراکترهای نامعتبر
-    function cleanInput(str) {
-      if (!str) return "";
-      return str.toString()
-        .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
-        .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
-        .replace(/[^0-9]/g, "");
+      // Persian ۰۱۲۳۴۵۶۷۸۹
+      s = s.replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+      // Arabic ٠١٢٣٤٥٦٧٨٩
+      s = s.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+
+      return s;
     }
 
-    // فرمت‌بندی اعداد
-    function formatNumber(val) {
-      if (val === null || val === undefined || val === "") return "-";
-      const cleanVal = cleanInput(val);
-      if (!isNaN(cleanVal) && cleanVal !== "") {
-        return Number(cleanVal).toLocaleString("fa-IR");
+    function normalizeNid(nidRaw) {
+      let nid = toEnglishDigits(nidRaw).trim();
+      nid = nid.replace(/\s+/g, "");
+      // فقط عدد
+      nid = nid.replace(/[^\d]/g, "");
+      return nid;
+    }
+
+    function normalizePhone(phoneRaw) {
+      let p = toEnglishDigits(phoneRaw).trim();
+      p = p.replace(/\s+/g, "");
+      p = p.replace(/[-_()]/g, "");
+      p = p.replace(/[^\d]/g, "");
+
+      // حالت‌های متداول:
+      // 09xxxxxxxxx  -> 9xxxxxxxxx
+      // 9xxxxxxxxx   -> 9xxxxxxxxx
+      // 0098... / 98... -> تبدیل
+      if (p.startsWith("0098")) p = p.slice(4);
+      if (p.startsWith("98")) p = p.slice(2);
+      if (p.startsWith("0")) p = p.slice(1);
+
+      return p; // انتظار: 9xxxxxxxxx
+    }
+
+    function formatFaNumber(val) {
+      // اگر عدد قابل تبدیل باشد، با جداکننده هزارگان نمایش بده
+      const s = (val === null || val === undefined) ? "" : String(val).trim();
+      const sEn = toEnglishDigits(s).replace(/,/g, "");
+      if (sEn !== "" && /^-?\d+(\.\d+)?$/.test(sEn)) {
+        const num = Number(sEn);
+        return num.toLocaleString("fa-IR");
       }
-      return val;
+      return s || "—";
     }
 
-    function setLoading(isLoading) {
-      submitBtn.disabled = isLoading;
-      spinner.style.display = isLoading ? "inline-block" : "none";
-      btnText.style.display = isLoading ? "none" : "inline";
+    function setStatus(type, text) {
+      const el = document.getElementById("status");
+      el.className = "status show " + (type || "");
+      el.textContent = text || "";
     }
 
-    function showError(msg) {
-      errorBox.textContent = msg;
-      errorBox.style.display = "block";
-      resultBox.style.display = "none";
+    function clearStatus() {
+      const el = document.getElementById("status");
+      el.className = "status";
+      el.textContent = "";
     }
 
-    function hideError() {
-      errorBox.style.display = "none";
+    function showLoading(on) {
+      const l = document.getElementById("loading");
+      const btn = document.getElementById("btnSearch");
+      l.style.display = on ? "inline-block" : "none";
+      btn.disabled = !!on;
     }
 
-    // تابع پارس دقیق فرمت CSV با پشتیبانی از مقادیر نقل‌قول‌دار
-    function parseCSV(text) {
-      const lines = text.trim().split(/\r\n|\n/);
-      return lines.map(line => {
-        const row = [];
-        let inQuotes = false;
-        let token = "";
-        for (let i = 0; i < line.length; i++) {
-          const char = line[i];
-          if (char === '"' && (i === 0 || line[i-1] !== '\\')) {
-            inQuotes = !inQuotes;
-          } else if (char === ',' && !inQuotes) {
-            row.push(token.replace(/^"|"$/g, '').trim());
-            token = "";
-          } else {
-            token += char;
-          }
-        }
-        row.push(token.replace(/^"|"$/g, '').trim());
-        return row;
+    function resetResults() {
+      document.getElementById("m1").textContent = "—";
+      document.getElementById("m2").textContent = "—";
+      document.getElementById("m3").textContent = "—";
+      document.getElementById("msg").textContent = "—";
+      document.getElementById("who").textContent = "—";
+    }
+
+    /***********************
+     * JSONP Fetch
+     ***********************/
+    function fetchJsonp(url, timeoutMs) {
+      return new Promise((resolve, reject) => {
+        const cb = "jsonp_cb_" + Math.random().toString(16).slice(2);
+        const script = document.createElement("script");
+
+        let done = false;
+        const cleanup = () => {
+          if (script.parentNode) script.parentNode.removeChild(script);
+          try { delete window[cb]; } catch(_) { window[cb] = undefined; }
+        };
+
+        const timer = setTimeout(() => {
+          if (done) return;
+          done = true;
+          cleanup();
+          reject(new Error("زمان پاسخ‌گویی سرور به پایان رسید."));
+        }, timeoutMs || 10000);
+
+        window[cb] = (data) => {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          cleanup();
+          reject(new Error("خطا در برقراری ارتباط با وب‌سرویس گوگل"));
+        };
+
+        const sep = url.includes("?") ? "&" : "?";
+        script.src = url + sep + "callback=" + encodeURIComponent(cb);
+        document.body.appendChild(script);
       });
     }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      hideError();
-      resultBox.style.display = "none";
+    async function queryAgent(nid, phone) {
+      // توجه: اینجا callback را fetchJsonp اضافه می‌کند
+      const url = `${SCRIPT_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}`;
+      return await fetchJsonp(url, REQUEST_TIMEOUT_MS);
+    }
 
-      const nid = cleanInput(nidInput.value);
-      const phone = cleanInput(phoneInput.value);
+    /***********************
+     * UI Handlers
+     ***********************/
+    async function handleSearch() {
+      clearStatus();
 
-      if (!nid) {
-        showError("لطفاً کد ملی را وارد نمایید.");
+      const nidRaw = document.getElementById("nidInput").value;
+      const phoneRaw = document.getElementById("phoneInput").value;
+
+      const nid = normalizeNid(nidRaw);
+      const phone = normalizePhone(phoneRaw);
+
+      if (!nid || nid.length < 8) {
+        setStatus("warn", "کدملی را درست وارد کنید.");
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        setStatus("warn", "شماره موبایل را درست وارد کنید. (مثال: 0937... یا 937...)");
         return;
       }
 
-      if (!phone) {
-        showError("لطفاً شماره تماس را وارد نمایید.");
-        return;
-      }
-
-      setLoading(true);
+      showLoading(true);
+      resetResults();
 
       try {
-        const response = await fetch(`${CSV_URL}&t=${Date.now()}`);
-        if (!response.ok) {
-          throw new Error("خطا در دریافت اطلاعات دیتابیس. دسترسی شیت را بررسی نمایید.");
-        }
+        const res = await queryAgent(nid, phone);
 
-        const csvText = await response.text();
-        const rows = parseCSV(csvText);
-
-        if (rows.length <= 1) {
-          showError("هیچ رکوردی در دیتابیس یافت نشد.");
+        if (!res || !res.status) {
+          setStatus("err", "پاسخ نامعتبر از سرور دریافت شد.");
           return;
         }
 
-        // ردیف اول: هدرها
-        const headers = rows[0].map(h => h.toLowerCase());
-        const nidIdx = headers.findIndex(h => h.includes("national") || h.includes("کد ملی") || h.includes("کدملی"));
-        const phoneIdx = headers.findIndex(h => h.includes("phone") || h.includes("تلفن") || h.includes("موبایل"));
-        const m1Idx = headers.findIndex(h => h.includes("metric1") || h.includes("شاخص 1"));
-        const m2Idx = headers.findIndex(h => h.includes("metric2") || h.includes("شاخص 2"));
-        const m3Idx = headers.findIndex(h => h.includes("metric3") || h.includes("شاخص 3"));
-        const msgIdx = headers.findIndex(h => h.includes("message") || h.includes("پیام"));
+        if (res.status === "success" && res.data) {
+          // اگر در بک‌اند هدرها را برگرداندی، اینجا هم می‌توانی ست کنی
+          document.getElementById("m1").textContent = formatFaNumber(res.data.metric1);
+          document.getElementById("m2").textContent = formatFaNumber(res.data.metric2);
+          document.getElementById("m3").textContent = formatFaNumber(res.data.metric3);
+          document.getElementById("msg").textContent = (res.data.message ?? "").toString().trim() || "—";
+          document.getElementById("who").textContent = "اطلاعات شما با موفقیت دریافت شد.";
 
-        const colNid = nidIdx !== -1 ? nidIdx : 0;
-        const colPhone = phoneIdx !== -1 ? phoneIdx : 1;
-        const colM1 = m1Idx !== -1 ? m1Idx : 2;
-        const colM2 = m2Idx !== -1 ? m2Idx : 3;
-        const colM3 = m3Idx !== -1 ? m3Idx : 4;
-        const colMsg = msgIdx !== -1 ? msgIdx : 5;
-
-        let matchedRow = null;
-
-        for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          const rowNid = cleanInput(row[colNid] || "");
-          const rowPhone = cleanInput(row[colPhone] || "");
-
-          // مقایسه با انطباق دقیق یا ۱۰ رقم انتهای شماره (برای پشتیبانی از 0 اول شماره)
-          const phoneMatches = (rowPhone === phone) || 
-                               (rowPhone.length >= 10 && phone.length >= 10 && (rowPhone.endsWith(phone.slice(-10)) || phone.endsWith(rowPhone.slice(-10))));
-
-          if (rowNid === nid && phoneMatches) {
-            matchedRow = row;
-            break;
-          }
-        }
-
-        if (!matchedRow) {
-          showError("اطلاعاتی با این مشخصات یافت نشد.");
-          return;
-        }
-
-        // نمایش اطلاعات رکورد پیدا شده
-        const agentName = matchedRow[colMsg] || "نماینده گرامی";
-        document.getElementById("agentName").textContent = agentName;
-        document.getElementById("m1").textContent = formatNumber(matchedRow[colM1]);
-        document.getElementById("m2").textContent = formatNumber(matchedRow[colM2]);
-        document.getElementById("m3").textContent = formatNumber(matchedRow[colM3]);
-
-        const msgContainer = document.getElementById("msgContainer");
-        const msgText = document.getElementById("agentMessage");
-        if (matchedRow[colMsg] && matchedRow[colMsg].trim() !== "") {
-          msgText.textContent = matchedRow[colMsg];
-          msgContainer.style.display = "block";
+          setStatus("ok", "استعلام با موفقیت انجام شد.");
+        } else if (res.status === "not_found") {
+          setStatus("warn", res.message || "اطلاعاتی با این مشخصات یافت نشد.");
         } else {
-          msgContainer.style.display = "none";
+          setStatus("err", res.message || "خطای ناشناخته رخ داد.");
         }
-
-        resultBox.style.display = "block";
-
       } catch (err) {
-        showError("خطا در برقراری ارتباط: " + (err.message || "خطای نامشخص"));
+        setStatus("err", err && err.message ? err.message : "خطای ناشناخته در ارتباط.");
       } finally {
-        setLoading(false);
+        showLoading(false);
       }
+    }
+
+    function fillTest() {
+      // تستی که گفتی (اگر هنوز در شیت هست)
+      document.getElementById("nidInput").value = "1050781538";
+      document.getElementById("phoneInput").value = "09378852305";
+      clearStatus();
+    }
+
+    function resetAll() {
+      document.getElementById("nidInput").value = "";
+      document.getElementById("phoneInput").value = "";
+      clearStatus();
+      resetResults();
+    }
+
+    // Enter برای استعلام
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleSearch();
     });
   </script>
 </body>
