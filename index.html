@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پورتال استعلام وضعیت مالی نمایندگان</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --danger: #f87171;
+      --border: #334155;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px;
+    }
+    .container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 24px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+    .logo-badge {
+      width: 48px;
+      height: 48px;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.4rem;
+    }
+    h2 {
+      margin: 0 0 6px 0;
+      text-align: center;
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    p.desc {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 0 0 24px 0;
+      line-height: 1.5;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0f172a;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      direction: ltr;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: var(--accent);
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #0b1120;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background-color 0.2s, opacity 0.2s;
+    }
+    button:hover {
+      background-color: var(--accent-hover);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .error-msg {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 16px;
+      display: none;
+    }
+    .result-box {
+      display: none;
+      margin-top: 24px;
+      border-top: 1px dashed var(--border);
+      padding-top: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .metric-card {
+      background: #0f172a;
+      padding: 12px 6px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .metric-title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      direction: ltr;
+    }
+    .message-card {
+      background: #0f172a;
+      padding: 14px;
+      border-radius: 8px;
+      border-right: 3px solid var(--accent);
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="logo-badge">📊</div>
+    <h2>پورتال نمایندگان</h2>
+    <p class="desc">جهت مشاهده اطلاعات مالی، کد ملی و شماره همراه خود را وارد کنید.</p>
+
+    <div class="form-group">
+      <label>کد ملی</label>
+      <input type="text" id="nid" placeholder="10 رقم" maxlength="10">
+    </div>
+
+    <div class="form-group">
+      <label>شماره همراه</label>
+      <input type="text" id="phone" placeholder="09xxxxxxxxx" maxlength="11">
+    </div>
+
+    <button id="submitBtn" onclick="handleLookup()">مشاهده اطلاعات</button>
+    <div id="error" class="error-msg"></div>
+
+    <div id="result" class="result-box">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-title">شاخص اول</div>
+          <div class="metric-value" id="m1">-</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">شاخص دوم</div>
+          <div class="metric-value" id="m2">-</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">شاخص سوم</div>
+          <div class="metric-value" id="m3">-</div>
+        </div>
+      </div>
+      <div class="message-card" id="msgText"></div>
+    </div>
+  </div>
+
+  <script>
+    async function handleLookup() {
+      const nid = document.getElementById('nid').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const errBox = document.getElementById('error');
+      const resBox = document.getElementById('result');
+
+      errBox.style.display = 'none';
+      resBox.style.display = 'none';
+
+      if (!nid || !phone) {
+        errBox.textContent = 'لطفاً هر دو فیلد کد ملی و شماره همراه را وارد نمایید.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      // تست موقت برای بررسی لود شدن صفحه در وب
+      document.getElementById('m1').textContent = '۱۲,۵۰۰,۰۰۰';
+      document.getElementById('m2').textContent = '۸۵٪';
+      document.getElementById('m3').textContent = '۱۲۰';
+      document.getElementById('msgText').textContent = 'این یک خروجی تستی برای بررسی بالا آمدن کامل صفحه در وب است.';
+      resBox.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
