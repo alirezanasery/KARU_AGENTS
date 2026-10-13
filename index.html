@@ -244,18 +244,18 @@
     <div class="card">
       <div class="header">
         <h1>پورتال اطلاع‌رسانی نمایندگان</h1>
-        <p>جهت مشاهده وضعیت مالی، اطلاعات زیر را وارد نمایید</p>
+        <p>جهت استعلام وضعیت، اطلاعات زیر را وارد نمایید</p>
       </div>
 
       <form id="queryForm">
         <div class="form-group">
           <label for="nid">کد ملی</label>
-          <input type="text" id="nid" placeholder="مثال: 0012345678" maxlength="10" required autocomplete="off">
+          <input type="text" id="nid" placeholder="مثال: 1050781538" required autocomplete="off">
         </div>
 
         <div class="form-group">
           <label for="phone">شماره موبایل</label>
-          <input type="tel" id="phone" placeholder="مثال: 09123456789" maxlength="11" required autocomplete="off">
+          <input type="tel" id="phone" placeholder="مثال: 09378852305" required autocomplete="off">
         </div>
 
         <button type="submit" class="btn-submit" id="submitBtn">
@@ -291,13 +291,14 @@
     </div>
 
     <div class="footer">
-      سامانه یکپارچه گزارشات و عملکرد مالی
+      سامانه یکپارچه گزارشات و عملکرد نمایندگان
     </div>
   </div>
 
   <script>
-    // آدرس وب‌اپ اختصاصی شما
-    const SCRIPT_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKEN8pvb39c1isiX1X/exec";
+    // آدرس خواندن مستقیم شیت شما بدون واسطه اسکریپت
+    const SHEET_ID = "13bPVuxgdyrtSOf6lvmf8bQAEFkL8UXfbUxHlBB4G6V0";
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=db`;
 
     const form = document.getElementById("queryForm");
     const nidInput = document.getElementById("nid");
@@ -308,18 +309,23 @@
     const errorBox = document.getElementById("errorBox");
     const resultBox = document.getElementById("resultBox");
 
-    // تبدیل اعداد فارسی/عربی به انگلیسی و حذف کاراکترهای اضافه
+    // پاکسازی اعداد فارسی/عربی و حذف کاراکترهای نامعتبر
     function cleanInput(str) {
+      if (!str) return "";
       return str.toString()
         .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
         .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
         .replace(/[^0-9]/g, "");
     }
 
-    // فرمت‌دهی سه‌رقم‌سه‌رقم
+    // فرمت‌بندی اعداد
     function formatNumber(val) {
-      if (val === null || val === undefined || isNaN(val) || val === "") return val;
-      return Number(val).toLocaleString("fa-IR");
+      if (val === null || val === undefined || val === "") return "-";
+      const cleanVal = cleanInput(val);
+      if (!isNaN(cleanVal) && cleanVal !== "") {
+        return Number(cleanVal).toLocaleString("fa-IR");
+      }
+      return val;
     }
 
     function setLoading(isLoading) {
@@ -338,35 +344,26 @@
       errorBox.style.display = "none";
     }
 
-    // ارسال درخواست ایمن از طریق JSONP برای دور زدن محدودیت‌های CORS و ریدایرکت گوگل
-    function jsonpRequest(url, timeoutMs = 12000) {
-      return new Promise((resolve, reject) => {
-        const callbackName = "jsonp_cb_" + Math.round(100000 * Math.random());
-        const script = document.createElement("script");
-
-        const cleanup = () => {
-          if (script.parentNode) script.parentNode.removeChild(script);
-          delete window[callbackName];
-          clearTimeout(timeoutTimer);
-        };
-
-        const timeoutTimer = setTimeout(() => {
-          cleanup();
-          reject(new Error("مهلت زمان پاسخ‌دهی به پایان رسید. لطفاً مجدداً تلاش کنید."));
-        }, timeoutMs);
-
-        window[callbackName] = (data) => {
-          cleanup();
-          resolve(data);
-        };
-
-        script.src = `${url}&callback=${callbackName}`;
-        script.onerror = () => {
-          cleanup();
-          reject(new Error("خطا در برقراری ارتباط با سرور. لطفاً اتصال اینترنت را بررسی کنید."));
-        };
-
-        document.body.appendChild(script);
+    // تابع پارس دقیق فرمت CSV با پشتیبانی از مقادیر نقل‌قول‌دار
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r\n|\n/);
+      return lines.map(line => {
+        const row = [];
+        let inQuotes = false;
+        let token = "";
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"' && (i === 0 || line[i-1] !== '\\')) {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            row.push(token.replace(/^"|"$/g, '').trim());
+            token = "";
+          } else {
+            token += char;
+          }
+        }
+        row.push(token.replace(/^"|"$/g, '').trim());
+        return row;
       });
     }
 
@@ -378,44 +375,90 @@
       const nid = cleanInput(nidInput.value);
       const phone = cleanInput(phoneInput.value);
 
-      if (nid.length < 8) {
-        showError("کد ملی وارد شده معتبر نمی‌باشد.");
+      if (!nid) {
+        showError("لطفاً کد ملی را وارد نمایید.");
         return;
       }
 
-      if (phone.length < 10) {
-        showError("شماره موبایل وارد شده معتبر نمی‌باشد.");
+      if (!phone) {
+        showError("لطفاً شماره تماس را وارد نمایید.");
         return;
       }
 
       setLoading(true);
 
-      const requestUrl = `${SCRIPT_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}`;
-
       try {
-        const res = await jsonpRequest(requestUrl);
-
-        if (res.status === "success" && res.data) {
-          document.getElementById("agentName").textContent = res.data.name || "نماینده گرامی";
-          document.getElementById("m1").textContent = formatNumber(res.data.metric1);
-          document.getElementById("m2").textContent = formatNumber(res.data.metric2);
-          document.getElementById("m3").textContent = formatNumber(res.data.metric3);
-
-          const msgContainer = document.getElementById("msgContainer");
-          const msgText = document.getElementById("agentMessage");
-          if (res.data.message && res.data.message.trim() !== "") {
-            msgText.textContent = res.data.message;
-            msgContainer.style.display = "block";
-          } else {
-            msgContainer.style.display = "none";
-          }
-
-          resultBox.style.display = "block";
-        } else {
-          showError(res.message || "اطلاعاتی با این مشخصات یافت نشد.");
+        const response = await fetch(`${CSV_URL}&t=${Date.now()}`);
+        if (!response.ok) {
+          throw new Error("خطا در دریافت اطلاعات دیتابیس. دسترسی شیت را بررسی نمایید.");
         }
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+
+        if (rows.length <= 1) {
+          showError("هیچ رکوردی در دیتابیس یافت نشد.");
+          return;
+        }
+
+        // ردیف اول: هدرها
+        const headers = rows[0].map(h => h.toLowerCase());
+        const nidIdx = headers.findIndex(h => h.includes("national") || h.includes("کد ملی") || h.includes("کدملی"));
+        const phoneIdx = headers.findIndex(h => h.includes("phone") || h.includes("تلفن") || h.includes("موبایل"));
+        const m1Idx = headers.findIndex(h => h.includes("metric1") || h.includes("شاخص 1"));
+        const m2Idx = headers.findIndex(h => h.includes("metric2") || h.includes("شاخص 2"));
+        const m3Idx = headers.findIndex(h => h.includes("metric3") || h.includes("شاخص 3"));
+        const msgIdx = headers.findIndex(h => h.includes("message") || h.includes("پیام"));
+
+        const colNid = nidIdx !== -1 ? nidIdx : 0;
+        const colPhone = phoneIdx !== -1 ? phoneIdx : 1;
+        const colM1 = m1Idx !== -1 ? m1Idx : 2;
+        const colM2 = m2Idx !== -1 ? m2Idx : 3;
+        const colM3 = m3Idx !== -1 ? m3Idx : 4;
+        const colMsg = msgIdx !== -1 ? msgIdx : 5;
+
+        let matchedRow = null;
+
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          const rowNid = cleanInput(row[colNid] || "");
+          const rowPhone = cleanInput(row[colPhone] || "");
+
+          // مقایسه با انطباق دقیق یا ۱۰ رقم انتهای شماره (برای پشتیبانی از 0 اول شماره)
+          const phoneMatches = (rowPhone === phone) || 
+                               (rowPhone.length >= 10 && phone.length >= 10 && (rowPhone.endsWith(phone.slice(-10)) || phone.endsWith(rowPhone.slice(-10))));
+
+          if (rowNid === nid && phoneMatches) {
+            matchedRow = row;
+            break;
+          }
+        }
+
+        if (!matchedRow) {
+          showError("اطلاعاتی با این مشخصات یافت نشد.");
+          return;
+        }
+
+        // نمایش اطلاعات رکورد پیدا شده
+        const agentName = matchedRow[colMsg] || "نماینده گرامی";
+        document.getElementById("agentName").textContent = agentName;
+        document.getElementById("m1").textContent = formatNumber(matchedRow[colM1]);
+        document.getElementById("m2").textContent = formatNumber(matchedRow[colM2]);
+        document.getElementById("m3").textContent = formatNumber(matchedRow[colM3]);
+
+        const msgContainer = document.getElementById("msgContainer");
+        const msgText = document.getElementById("agentMessage");
+        if (matchedRow[colMsg] && matchedRow[colMsg].trim() !== "") {
+          msgText.textContent = matchedRow[colMsg];
+          msgContainer.style.display = "block";
+        } else {
+          msgContainer.style.display = "none";
+        }
+
+        resultBox.style.display = "block";
+
       } catch (err) {
-        showError(err.message || "خطا در پردازش اطلاعات.");
+        showError("خطا در برقراری ارتباط: " + (err.message || "خطای نامشخص"));
       } finally {
         setLoading(false);
       }
