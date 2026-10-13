@@ -207,13 +207,36 @@
       <div class="message-card" id="msgText"></div>
     </div>
   </div>
-
   <script>
+    // آدرس وب‌اپلیکیشن اختصاصی گوگل‌اسکریپت شما
+    const API_URL = "https://script.google.com/macros/s/GAPGPTMASKTOKEN2tescd0ynhhX0X/exec";
+
+    // تبدیل اعداد فارسی/عربی به انگلیسی برای جلوگیری از خطای ورودی کاربر روی کیبورد موبایل
+    function toEnglishDigits(str) {
+      if (!str) return "";
+      return str
+        .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+        .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+    }
+
+    // فرمت سه‌رقم‌سه‌رقم فارسی
+    function formatValue(val) {
+      if (val === null || val === undefined || val === '') return '-';
+      const cleanStr = val.toString().replace(/,/g, '').trim();
+      return !isNaN(cleanStr) && cleanStr !== ''
+        ? Number(cleanStr).toLocaleString('fa-IR')
+        : val;
+    }
+
     async function handleLookup() {
-      const nid = document.getElementById('nid').value.trim();
-      const phone = document.getElementById('phone').value.trim();
+      const nidInput = document.getElementById('nid');
+      const phoneInput = document.getElementById('phone');
+      const btn = document.getElementById('submitBtn');
       const errBox = document.getElementById('error');
       const resBox = document.getElementById('result');
+
+      const nid = toEnglishDigits(nidInput.value.trim());
+      const phone = toEnglishDigits(phoneInput.value.trim());
 
       errBox.style.display = 'none';
       resBox.style.display = 'none';
@@ -224,12 +247,42 @@
         return;
       }
 
-      // تست موقت برای بررسی لود شدن صفحه در وب
-      document.getElementById('m1').textContent = '۱۲,۵۰۰,۰۰۰';
-      document.getElementById('m2').textContent = '۸۵٪';
-      document.getElementById('m3').textContent = '۱۲۰';
-      document.getElementById('msgText').textContent = 'این یک خروجی تستی برای بررسی بالا آمدن کامل صفحه در وب است.';
-      resBox.style.display = 'block';
+      // وضعیت در حال لودینگ
+      btn.textContent = 'در حال استعلام...';
+      btn.disabled = true;
+
+      try {
+        const endpoint = `${API_URL}?nid=${encodeURIComponent(nid)}&phone=${encodeURIComponent(phone)}`;
+        const response = await fetch(endpoint, {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const res = await response.json();
+
+        if (res.status === 'success' && res.data) {
+          document.getElementById('m1').textContent = formatValue(res.data.m1);
+          document.getElementById('m2').textContent = formatValue(res.data.m2);
+          document.getElementById('m3').textContent = formatValue(res.data.m3);
+          document.getElementById('msgText').textContent = res.data.msg || 'پیامی ثبت نشده است.';
+          
+          resBox.style.display = 'block';
+        } else {
+          errBox.textContent = res.message || 'اطلاعاتی با این کد ملی و شماره همراه یافت نشد.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        console.error(err);
+        errBox.textContent = 'خطا در برقراری ارتباط با سامانه. لطفاً اتصال اینترنت خود را بررسی کنید.';
+        errBox.style.display = 'block';
+      } finally {
+        btn.textContent = 'مشاهده اطلاعات';
+        btn.disabled = false;
+      }
     }
   </script>
 </body>
