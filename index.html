@@ -267,14 +267,6 @@
       color: var(--text-muted);
     }
 
-        /* استایل اختصاصی برای جدول و کارت حساب 1404 */
-    .acc1404-card {
-      margin-top: 24px;
-      background: rgba(16, 185, 129, 0.07);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: 14px;
-      padding: 16px;
-    }
 
     .acc1404-header {
       display: flex;
@@ -296,6 +288,56 @@
       font-weight: 600;
     }
 
+        /* نشانگر راهنمای اسکرول در موبایل */
+    .scroll-hint {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      color: #94a3b8;
+      background: rgba(148, 163, 184, 0.08);
+      border: 1px dashed rgba(148, 163, 184, 0.25);
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      animation: pulseHint 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* فعال شدن راهنما فقط در موبایل و تبلت */
+    @media (max-width: 768px) {
+      .scroll-hint {
+        display: flex;
+      }
+    }
+
+        /* استایل استاندارد، برجسته و شفاف اسکرول‌بار برای هر دو جدول */
+    .table-container::-webkit-scrollbar {
+      height: 8px; /* ضخامت مناسب برای دید بهتر در موبایل */
+    }
+
+    .table-container::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.808);
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+      background: #38bdf8; /* رنگ آبی روشن و کاملاً واضح برای هر دو جدول */
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.4); /* افکت نوری ملایم برای دیده شدن بهتر */
+    }
+
+    .table-container::-webkit-scrollbar-thumb:hover {
+      background: #004b6e;
+    }
+
+
   </style>
 </head>
 <body>
@@ -311,11 +353,11 @@
       <div class="form-grid">
         <div class="form-group">
           <label for="national_id">کد ملی</label>
-          <input type="text" id="national_id" placeholder="مثال: ۱۰۵۰۷۸۱۵۳۸" maxlength="10" autocomplete="off">
+          <input type="text" id="national_id" placeholder="**********" maxlength="10" autocomplete="off">
         </div>
         <div class="form-group">
           <label for="phone">شماره همراه</label>
-          <input type="text" id="phone" placeholder="مثال: ۰۹۳۷۸۸۵۲۳۰۵" maxlength="11" autocomplete="off">
+          <input type="text" id="phone" placeholder="09*********" maxlength="11" autocomplete="off">
         </div>
       </div>
       <button class="btn" id="submit-btn" onclick="lookupData()">مشاهده صورت‌حساب</button>
@@ -343,6 +385,14 @@
 
         <!-- جدول ۵ مولفه مالی -->
                 <!-- جدول اول: سرفصل‌های مالی (۴ مورد اول) -->
+
+        <!-- راهنمای اسکرول برای موبایل -->
+        <div class="scroll-hint">
+          <span>👈</span>
+          <span>برای مشاهده تمام ستون‌ها، جدول را به چپ بکشید</span>
+          <span>👉</span>
+        </div>
+
         <div class="table-container">
           <table>
             <thead>
@@ -364,6 +414,12 @@
         <div class="acc1404-card">
           <div class="acc1404-header">
             <span>📌 وضعیت صورت‌حساب دوره ۱۴۰۴</span>
+          </div>
+          <!-- راهنمای اسکرول برای جدول 1404 -->
+          <div class="scroll-hint">
+            <span>👈</span>
+            <span>برای مشاهده تمام ستون‌ها، جدول را به چپ بکشید</span>
+            <span>👉</span>
           </div>
           <div class="table-container" style="margin-top: 0;">
             <table>
